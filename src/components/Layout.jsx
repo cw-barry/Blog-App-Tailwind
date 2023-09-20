@@ -1,0 +1,19 @@
+import React from 'react'
+import Header from './Header'
+
+const Layout = ({children}) => {
+  return (
+    <div className="flex flex-col min-h-screen">
+        <Header/>
+        <main className='flex-1 container mx-auto'>
+        {children}
+
+        </main>
+        <footer className='ring-1 ing-gray-300 bg-gray-100 p-5 mt-5'>
+            <p className='text-center text-gray-700 '> Copy Rights &copy; 2023</p>
+        </footer>
+    </div>
+  )
+}
+
+export default Layout
