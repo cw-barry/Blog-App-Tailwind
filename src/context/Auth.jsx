@@ -1,16 +1,16 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useContext } from "react";
-import { toast } from "react-toastify";
-import { createContext } from "react";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useContext } from 'react';
+import { toast } from 'react-toastify';
+import { createContext } from 'react';
 
 const AuthContext = createContext({
   register: () => {},
-  userInfo: "",
+  userInfo: '',
   login: () => {},
   logout: () => {},
 });
-const baseUrl = "https://21212.fullstack.clarusway.com";
+const baseUrl = 'https://cwbarry.pythonanywhere.com/';
 
 const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
@@ -24,9 +24,9 @@ const AuthProvider = ({ children }) => {
 
   function checkAuth() {
     if (userInfo) {
-      localStorage.setItem("user", JSON.stringify(userInfo));
+      localStorage.setItem('user', JSON.stringify(userInfo));
     } else {
-      const user = localStorage.getItem("user");
+      const user = localStorage.getItem('user');
       if (user) setUserInfo(JSON.parse(user));
     }
   }
@@ -38,8 +38,8 @@ const AuthProvider = ({ children }) => {
         userData
       );
       setUserInfo({ key: data.key, ...data.user });
-      toast.success("User registered successfully!");
-      navigate("/");
+      toast.success('User registered successfully!');
+      navigate('/');
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -50,8 +50,8 @@ const AuthProvider = ({ children }) => {
     try {
       const { data } = await axios.post(`${baseUrl}/account/login/`, userData);
       setUserInfo({ key: data.key, ...data.user });
-      toast.success("User loged in  successfully!");
-      navigate("/");
+      toast.success('User loged in  successfully!');
+      navigate('/');
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -59,21 +59,21 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = async (navigate) => {
-    let token = JSON.parse(localStorage.getItem("user")).key;
+    let token = JSON.parse(localStorage.getItem('user')).key;
     try {
       axios.post(`${baseUrl}/account/logout/`, {
         headers: { Authorization: `Berar ${token}` },
       });
-      toast.success("Logged out successfully");
+      toast.success('Logged out successfully');
       localStorage.removeItem('user');
-      navigate("/auth/login");
+      navigate('/auth/login');
     } catch (err) {
       console.log(err);
       toast.error(err.message);
     }
   };
   return (
-    <AuthContext.Provider value={{ register, userInfo, login , logout }}>
+    <AuthContext.Provider value={{ register, userInfo, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

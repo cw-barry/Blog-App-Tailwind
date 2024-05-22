@@ -1,7 +1,7 @@
-import axios from "axios";
-import { createContext, useContext, useState } from "react";
-import { toast } from "react-toastify";
-import { useAuth } from "./Auth";
+import axios from 'axios';
+import { createContext, useContext, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useAuth } from './Auth';
 
 const BlogContext = createContext({
   getPosts: () => {},
@@ -11,15 +11,13 @@ const BlogContext = createContext({
   addLike: () => {},
   deletePost: () => {},
   updatePost: () => {},
-  posts: [], 
-  currentPost:{}
+  posts: [],
+  currentPost: {},
 });
-const baseUrl = "https://21212.fullstack.clarusway.com";
+const baseUrl = 'https://cwbarry.pythonanywhere.com/';
 
 const BlogProvider = ({ children }) => {
-
-
-  const {userInfo} =  useAuth()
+  const { userInfo } = useAuth();
   const [posts, setPosts] = useState([]);
   const [currentPost, setCurrentPost] = useState(null);
 
@@ -27,7 +25,7 @@ const BlogProvider = ({ children }) => {
   const getPosts = async () => {
     try {
       const { data } = await axios.get(`${baseUrl}/blog/`);
-      console.log(data)
+      console.log(data);
       setPosts(data.results);
     } catch (error) {
       console.log(error);
@@ -50,20 +48,20 @@ const BlogProvider = ({ children }) => {
   const createPost = async (data, navigate) => {
     try {
       const formdata = new FormData();
-      formdata.append("title", data.title);
-      formdata.append("content", data.content);
-      if (data.image) formdata.append("image", data.image, data.image.name);
+      formdata.append('title', data.title);
+      formdata.append('content', data.content);
+      if (data.image) formdata.append('image', data.image, data.image.name);
 
       await axios({
-        method:'Post',
-        url:`${baseUrl}/blog/`, 
-        data: formdata, 
-        headers:{
-          Authorization:`Token ${userInfo.key}`
-        }
+        method: 'Post',
+        url: `${baseUrl}/blog/`,
+        data: formdata,
+        headers: {
+          Authorization: `Token ${userInfo.key}`,
+        },
       });
-      toast.success("Post created successfully !");
-      navigate("/");
+      toast.success('Post created successfully !');
+      navigate('/');
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -74,18 +72,16 @@ const BlogProvider = ({ children }) => {
 
   const addComment = async (id, content) => {
     try {
-
-
       await axios({
-        method:'Post',
-        url:`${baseUrl}/blog/comment/`, 
-        data: { post: id, content }, 
-        headers:{
-          Authorization:`Token ${userInfo.key}`
-        }
+        method: 'Post',
+        url: `${baseUrl}/blog/comment/`,
+        data: { post: id, content },
+        headers: {
+          Authorization: `Token ${userInfo.key}`,
+        },
       });
 
-      toast.success("Comment added successfully !");
+      toast.success('Comment added successfully !');
       getPost(id);
     } catch (error) {
       console.log(error);
@@ -93,75 +89,72 @@ const BlogProvider = ({ children }) => {
     }
   };
 
-//   Delete a post using its id 
+  //   Delete a post using its id
 
-const deletePost = async(id, navigate)=>{
+  const deletePost = async (id, navigate) => {
     try {
       await axios({
-        method:'Delete',
-        url:`${baseUrl}/blog/${id}/`, 
+        method: 'Delete',
+        url: `${baseUrl}/blog/${id}/`,
 
-        headers:{
-          Authorization:`Token ${userInfo.key}`
-        }
+        headers: {
+          Authorization: `Token ${userInfo.key}`,
+        },
       });
- 
-        toast.success("Post deleted successfully !");
-        navigate('/')
-      } catch (error) {
-        console.log(error);
-        toast.error(error.message);
-      }
-}
 
-// Add a Like to a post 
+      toast.success('Post deleted successfully !');
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
 
-const addLike = async(slug, id)=>{
+  // Add a Like to a post
+
+  const addLike = async (slug, id) => {
     try {
       await axios({
-        method:'Post',
-        url:`${baseUrl}/blog/like/${slug}/`, 
+        method: 'Post',
+        url: `${baseUrl}/blog/like/${slug}/`,
 
-        headers:{
-          Authorization:`Token ${userInfo.key}`
-        }
+        headers: {
+          Authorization: `Token ${userInfo.key}`,
+        },
       });
-        
-        getPosts();
-      } catch (error) {
-        console.log(error);
-        toast.error(error.message);
-      }
-}
 
-// Update a post using its id 
+      getPosts();
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
 
-const updatePost = async(data, navigate, id)=>{
+  // Update a post using its id
 
-        try {
-          const formdata = new FormData();
-          formdata.append("title", data.title);
-          formdata.append("content", data.content);
-          if (data.image) formdata.append("image", data.image, data.image.name);
-    
+  const updatePost = async (data, navigate, id) => {
+    try {
+      const formdata = new FormData();
+      formdata.append('title', data.title);
+      formdata.append('content', data.content);
+      if (data.image) formdata.append('image', data.image, data.image.name);
 
-          await axios({
-            method:'Put',
-            url:`${baseUrl}/blog/${id}/`, 
-            data: formdata, 
-            headers:{
-              Authorization:`Token ${userInfo.key}`
-            }
-          });
+      await axios({
+        method: 'Put',
+        url: `${baseUrl}/blog/${id}/`,
+        data: formdata,
+        headers: {
+          Authorization: `Token ${userInfo.key}`,
+        },
+      });
 
-          toast.success("Post updated successfully !");
-          navigate("/");
-        } catch (error) {
-          console.log(error);
-          toast.error(error.message);
-        }
-
-}
+      toast.success('Post updated successfully !');
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
   return (
     <BlogContext.Provider
       value={{
@@ -172,8 +165,8 @@ const updatePost = async(data, navigate, id)=>{
         addLike,
         deletePost,
         updatePost,
-        posts, 
-        currentPost
+        posts,
+        currentPost,
       }}
     >
       {children}
