@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAuth } from './Auth';
 
@@ -13,6 +13,9 @@ const BlogContext = createContext({
   updatePost: () => {},
   posts: [],
   currentPost: {},
+  paginationData: {},
+  page: 1,
+  setPage: () => {},
 });
 const baseUrl = 'https://cwbarry.pythonanywhere.com/';
 
@@ -21,12 +24,36 @@ const BlogProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [currentPost, setCurrentPost] = useState(null);
 
+  const [page, setPage] = useState(1);
+  const [paginationData, setPaginationData] = useState({
+    count: 0,
+    next: null,
+    previous: null,
+    totalPages: 0,
+  });
+
+  useEffect(() => {
+    if (page) {
+      getPosts(page);
+    }
+  }, [page]);
+
   // Get all Posts
-  const getPosts = async () => {
+  const getPosts = async (page) => {
+    let url = `${baseUrl}blog/`;
+    if (page) {
+      url = `${baseUrl}blog/?page=${page}`;
+    }
     try {
-      const { data } = await axios.get(`${baseUrl}/blog/`);
+      const { data } = await axios.get(url);
       console.log(data);
       setPosts(data.results);
+      setPaginationData({
+        count: data.count,
+        next: data.next,
+        previous: data.previous,
+        totalPages: Math.ceil(data.count / 10),
+      });
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -167,6 +194,8 @@ const BlogProvider = ({ children }) => {
         updatePost,
         posts,
         currentPost,
+        paginationData,
+        setPage,
       }}
     >
       {children}
